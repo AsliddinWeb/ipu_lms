@@ -1,0 +1,150 @@
+<!-- templates/accounts/dashboard/teacher_dashboard.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - IPU LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">
+        <i class="bi bi-house me-2"></i>Bosh sahifa
+    </h4>
+    <span class="text-muted">Xush kelibsiz, {{ user.first_name|default:user.username }}!</span>
+</div>
+
+<!-- Statistika kartalar -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Fanlarim</h6>
+                        <h3 class="mb-0">0</h3>
+                    </div>
+                    <i class="bi bi-journal-text" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Talabalar</h6>
+                        <h3 class="mb-0">0</h3>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Testlar</h6>
+                        <h3 class="mb-0">0</h3>
+                    </div>
+                    <i class="bi bi-clipboard-check" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Bugungi darslar</h6>
+                        <h3 class="mb-0">0</h3>
+                    </div>
+                    <i class="bi bi-calendar-event" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Fanlarim -->
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>Fanlarim</h5>
+                <a href="#" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Yangi fan
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-2 mb-0">Hozircha fanlar yo'q</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tez harakatlar -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Tez harakatlar</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Test yaratish
+                    </a>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="bi bi-calendar-check me-2"></i>Davomat olish
+                    </a>
+                    <a href="#" class="btn btn-outline-info">
+                        <i class="bi bi-upload me-2"></i>Material yuklash
+                    </a>
+                    <a href="#" class="btn btn-outline-warning">
+                        <i class="bi bi-bar-chart me-2"></i>Baholar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Tekshirilmagan testlar -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-hourglass-split me-2"></i>Tekshirilmagan testlar</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-check-all" style="font-size: 2rem;"></i>
+                    <p class="mt-2 mb-0 small">Tekshirilmagan testlar yo'q</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bugungi dars jadvali -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock me-2"></i>Bugungi jadval</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-calendar-x" style="font-size: 2rem;"></i>
+                    <p class="mt-2 mb-0 small">Bugun darslar yo'q</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

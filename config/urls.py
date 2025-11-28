@@ -23,11 +23,14 @@ from django.conf.urls.static import static
 
 # Admin custom
 admin.site.site_title = "Admin"
-admin.site.site_header = "Admin name"
+admin.site.site_header = "IPU Lms"
 admin.site.index_title = "Dashboard"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Accounts
+    path('accounts/', include('apps.accounts.urls', namespace='accounts')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

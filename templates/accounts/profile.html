@@ -1,0 +1,146 @@
+<!-- templates/accounts/profile.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Profil - IPU LMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover;">
+                {% else %}
+                    <i class="bi bi-person-circle text-muted" style="font-size: 6rem;"></i>
+                {% endif %}
+
+                <h5 class="mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                <p class="text-muted mb-2">{{ user.get_role_display }}</p>
+
+                <span class="badge bg-primary">
+                    {% if user.is_student %}
+                        <i class="bi bi-mortarboard me-1"></i>Talaba
+                    {% elif user.is_teacher %}
+                        <i class="bi bi-person-workspace me-1"></i>O'qituvchi
+                    {% else %}
+                        <i class="bi bi-shield-check me-1"></i>Admin
+                    {% endif %}
+                </span>
+            </div>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-envelope me-2"></i>Email</span>
+                    <span class="text-muted">{{ user.email|default:"-" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-telephone me-2"></i>Telefon</span>
+                    <span class="text-muted">{{ user.phone|default:"-" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-calendar me-2"></i>Ro'yxatdan o'tgan</span>
+                    <span class="text-muted">{{ user.date_joined|date:"d.m.Y" }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-pencil me-2"></i>Profilni tahrirlash</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <h6 class="text-muted mb-3">Asosiy ma'lumotlar</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ user_form.first_name.label }}</label>
+                            {{ user_form.first_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ user_form.last_name.label }}</label>
+                            {{ user_form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ user_form.email.label }}</label>
+                            {{ user_form.email }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ user_form.phone.label }}</label>
+                            {{ user_form.phone }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ user_form.avatar.label }}</label>
+                        {{ user_form.avatar }}
+                    </div>
+
+                    {% if profile_form %}
+                        <hr>
+                        <h6 class="text-muted mb-3">
+                            {% if user.is_student %}
+                                Talaba ma'lumotlari
+                            {% else %}
+                                O'qituvchi ma'lumotlari
+                            {% endif %}
+                        </h6>
+
+                        {% if user.is_student %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ profile_form.student_id.label }}</label>
+                                    {{ profile_form.student_id }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ profile_form.enrollment_year.label }}</label>
+                                    {{ profile_form.enrollment_year }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ profile_form.faculty.label }}</label>
+                                    {{ profile_form.faculty }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ profile_form.group.label }}</label>
+                                    {{ profile_form.group }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if user.is_teacher %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ profile_form.employee_id.label }}</label>
+                                    {{ profile_form.employee_id }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ profile_form.academic_degree.label }}</label>
+                                    {{ profile_form.academic_degree }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ profile_form.department.label }}</label>
+                                {{ profile_form.department }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-2"></i>Saqlash
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

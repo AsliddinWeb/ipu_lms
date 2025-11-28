@@ -31,6 +31,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Local APPS
+    'apps.accounts',
+    'apps.courses',
+    'apps.assessments',
+    'apps.attendance',
+    'apps.analytics',
+    'apps.content',
 ]
 
 MIDDLEWARE = [
@@ -113,3 +121,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Telegram bot
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+
+
+# Accounts
+AUTH_USER_MODEL = 'accounts.User'
+
+# Login urls
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'accounts:dashboard'
+LOGOUT_REDIRECT_URL = 'accounts:login'
