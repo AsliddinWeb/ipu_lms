@@ -1,0 +1,201 @@
+<!-- templates/assessments/teacher/quiz_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} - Boshqaruv{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_courses' %}">Fanlarim</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_course_detail' quiz.course.pk %}">{{ quiz.course.code }}</a></li>
+        <li class="breadcrumb-item active">{{ quiz.title }}</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">{{ quiz.title }}</h4>
+        <span class="badge bg-secondary">{{ quiz.course.code }}</span>
+        {% if quiz.get_status == 'active' %}
+            <span class="badge bg-success">Faol</span>
+        {% elif quiz.get_status == 'upcoming' %}
+            <span class="badge bg-warning">Kutilmoqda</span>
+        {% elif quiz.get_status == 'expired' %}
+            <span class="badge bg-secondary">Tugagan</span>
+        {% else %}
+            <span class="badge bg-danger">Faol emas</span>
+        {% endif %}
+    </div>
+    <div>
+        <a href="{% url 'assessments:teacher_quiz_edit' quiz.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-pencil me-1"></i>Tahrirlash
+        </a>
+        <a href="{% url 'assessments:teacher_quiz_results' quiz.pk %}" class="btn btn-outline-info">
+            <i class="bi bi-bar-chart me-1"></i>Natijalar
+        </a>
+        <a href="{% url 'assessments:teacher_quiz_delete' quiz.pk %}" class="btn btn-outline-danger">
+            <i class="bi bi-trash me-1"></i>O'chirish
+        </a>
+    </div>
+</div>
+
+<!-- Statistika -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Savollar</h6>
+                        <h3 class="mb-0">{{ quiz.question_count }}</h3>
+                    </div>
+                    <i class="bi bi-question-circle" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Urinishlar</h6>
+                        <h3 class="mb-0">{{ stats.total_attempts }}</h3>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">O'rtacha ball</h6>
+                        <h3 class="mb-0">{{ stats.avg_score|floatformat:0 }}%</h3>
+                    </div>
+                    <i class="bi bi-graph-up" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">O'tganlar</h6>
+                        <h3 class="mb-0">{{ stats.passed_count }}</h3>
+                    </div>
+                    <i class="bi bi-check-circle" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Savollar -->
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-list-ol me-2"></i>Savollar</h5>
+                <a href="{% url 'assessments:teacher_question_create' quiz.pk %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Savol qo'shish
+                </a>
+            </div>
+            <div class="card-body p-0">
+                {% if questions %}
+                    <ul class="list-group list-group-flush">
+                        {% for question in questions %}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="badge bg-primary me-2">{{ forloop.counter }}</span>
+                                            <span class="badge bg-secondary me-2">{{ question.get_question_type_display }}</span>
+                                            <span class="badge bg-info">{{ question.points }} ball</span>
+                                        </div>
+                                        <p class="mb-2">{{ question.text }}</p>
+
+                                        <!-- Javoblar -->
+                                        <div class="ms-3">
+                                            {% for answer in question.answers.all %}
+                                                <small class="d-block {% if answer.is_correct %}text-success fw-bold{% else %}text-muted{% endif %}">
+                                                    {% if answer.is_correct %}
+                                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                                    {% else %}
+                                                        <i class="bi bi-circle me-1"></i>
+                                                    {% endif %}
+                                                    {{ answer.text }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="ms-3">
+                                        <a href="{% url 'assessments:teacher_question_edit' question.pk %}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'assessments:teacher_question_delete' question.pk %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-question-circle" style="font-size: 3rem;"></i>
+                        <p class="mt-2 mb-0">Hozircha savollar yo'q</p>
+                        <a href="{% url 'assessments:teacher_question_create' quiz.pk %}" class="btn btn-primary btn-sm mt-3">
+                            <i class="bi bi-plus-lg me-1"></i>Birinchi savolni qo'shish
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Test ma'lumotlari -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Test sozlamalari</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-clock me-2"></i>Vaqt</span>
+                    <span class="text-muted">{{ quiz.time_limit_minutes|default:"Cheksiz" }} daqiqa</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-check-circle me-2"></i>O'tish bali</span>
+                    <span class="text-muted">{{ quiz.passing_score }}%</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-arrow-repeat me-2"></i>Urinishlar</span>
+                    <span class="text-muted">{{ quiz.attempts_allowed }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-calendar me-2"></i>Boshlanish</span>
+                    <span class="text-muted">{{ quiz.available_from|date:"d.m.Y H:i" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-calendar-check me-2"></i>Tugash</span>
+                    <span class="text-muted">{{ quiz.available_until|date:"d.m.Y H:i" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-shuffle me-2"></i>Aralashtirish</span>
+                    <span class="text-muted">{{ quiz.shuffle_questions|yesno:"Ha,Yo'q" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-eye me-2"></i>Javoblarni ko'rsatish</span>
+                    <span class="text-muted">{{ quiz.show_correct_answers|yesno:"Ha,Yo'q" }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

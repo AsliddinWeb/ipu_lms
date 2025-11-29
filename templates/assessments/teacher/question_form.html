@@ -1,0 +1,139 @@
+<!-- templates/assessments/teacher/question_form.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_courses' %}">Fanlarim</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_course_detail' quiz.course.pk %}">{{ quiz.course.code }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'assessments:teacher_quiz_detail' quiz.pk %}">{{ quiz.title }}</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-question-circle me-2"></i>{{ title }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Savol ma'lumotlari -->
+                    <div class="mb-3">
+                        <label class="form-label">Savol turi</label>
+                        {{ form.question_type }}
+                        {% if form.question_type.errors %}
+                            <div class="text-danger small">{{ form.question_type.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Savol matni</label>
+                        {{ form.text }}
+                        {% if form.text.errors %}
+                            <div class="text-danger small">{{ form.text.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ball</label>
+                            {{ form.points }}
+                            {% if form.points.errors %}
+                                <div class="text-danger small">{{ form.points.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tartib</label>
+                            {{ form.order }}
+                            {% if form.order.errors %}
+                                <div class="text-danger small">{{ form.order.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Javoblar -->
+                    <h6 class="mb-3">
+                        <i class="bi bi-list-check me-2"></i>Javob variantlari
+                        <small class="text-muted">(Kamida 2 ta javob bo'lishi kerak)</small>
+                    </h6>
+
+                    {{ formset.management_form }}
+
+                    <div id="answers-container">
+                        {% for answer_form in formset %}
+                            <div class="card mb-3 answer-form">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-7">
+                                            {{ answer_form.text }}
+                                            {% if answer_form.text.errors %}
+                                                <div class="text-danger small">{{ answer_form.text.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-check">
+                                                {{ answer_form.is_correct }}
+                                                <label class="form-check-label">To'g'ri</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            {{ answer_form.order }}
+                                        </div>
+                                        <div class="col-md-1">
+                                            {% if answer_form.DELETE %}
+                                                <div class="form-check">
+                                                    {{ answer_form.DELETE }}
+                                                    <label class="form-check-label text-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </label>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {{ answer_form.id }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if formset.non_form_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in formset.non_form_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Eslatma:</strong>
+                        "Bitta to'g'ri javob" turida faqat bitta javobni to'g'ri deb belgilang.
+                        "Ko'p tanlov" turida bir nechta to'g'ri javob bo'lishi mumkin.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-2"></i>Saqlash
+                        </button>
+                        <a href="{% url 'assessments:teacher_quiz_detail' quiz.pk %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Bekor qilish
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

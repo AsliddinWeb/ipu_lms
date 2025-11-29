@@ -1,0 +1,62 @@
+<!-- templates/assessments/teacher/quiz_confirm_delete.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Testni o'chirish - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_courses' %}">Fanlarim</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_course_detail' quiz.course.pk %}">{{ quiz.course.code }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'assessments:teacher_quiz_detail' quiz.pk %}">{{ quiz.title }}</a></li>
+        <li class="breadcrumb-item active">O'chirish</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Testni o'chirish
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <i class="bi bi-trash text-danger" style="font-size: 4rem;"></i>
+
+                <h5 class="mt-3">{{ quiz.title }}</h5>
+                <p class="text-muted">Kurs: {{ quiz.course.name }}</p>
+
+                {% if quiz.question_count > 0 %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Bu testda <strong>{{ quiz.question_count }} ta savol</strong> bor.
+                    </div>
+                {% endif %}
+
+                {% if quiz.attempts.count > 0 %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Bu testda <strong>{{ quiz.attempts.count }} ta urinish</strong> mavjud. Barchasi o'chiriladi!
+                    </div>
+                {% endif %}
+
+                <p class="mb-4">Rostdan ham bu testni o'chirmoqchimisiz?</p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-2"></i>Ha, o'chirish
+                        </button>
+                        <a href="{% url 'assessments:teacher_quiz_detail' quiz.pk %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Bekor qilish
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

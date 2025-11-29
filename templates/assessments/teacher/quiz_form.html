@@ -1,0 +1,122 @@
+<!-- templates/assessments/teacher/quiz_form.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_courses' %}">Fanlarim</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_course_detail' course.pk %}">{{ course.code }}</a></li>
+        {% if quiz %}
+            <li class="breadcrumb-item"><a href="{% url 'assessments:teacher_quiz_detail' quiz.pk %}">{{ quiz.title }}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clipboard-check me-2"></i>{{ title }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Test nomi</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tavsif</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Vaqt chegarasi (daqiqa)</label>
+                            {{ form.time_limit_minutes }}
+                            <small class="text-muted">Bo'sh qoldiring - cheksiz</small>
+                            {% if form.time_limit_minutes.errors %}
+                                <div class="text-danger small">{{ form.time_limit_minutes.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">O'tish bali (%)</label>
+                            {{ form.passing_score }}
+                            {% if form.passing_score.errors %}
+                                <div class="text-danger small">{{ form.passing_score.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Urinishlar soni</label>
+                            {{ form.attempts_allowed }}
+                            {% if form.attempts_allowed.errors %}
+                                <div class="text-danger small">{{ form.attempts_allowed.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Boshlanish vaqti</label>
+                            {{ form.available_from }}
+                            {% if form.available_from.errors %}
+                                <div class="text-danger small">{{ form.available_from.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tugash vaqti</label>
+                            {{ form.available_until }}
+                            {% if form.available_until.errors %}
+                                <div class="text-danger small">{{ form.available_until.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check mb-2">
+                            {{ form.shuffle_questions }}
+                            <label class="form-check-label">Savollarni aralashtirish</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            {{ form.show_correct_answers }}
+                            <label class="form-check-label">Natijada to'g'ri javoblarni ko'rsatish</label>
+                        </div>
+
+                        <div class="form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label">Faol</label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-2"></i>Saqlash
+                        </button>
+                        <a href="{% url 'courses:teacher_course_detail' course.pk %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Bekor qilish
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
