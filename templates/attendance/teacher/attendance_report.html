@@ -1,0 +1,130 @@
+<!-- templates/attendance/teacher/attendance_report.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Davomat hisoboti - {{ course.name }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_courses' %}">Fanlarim</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_course_detail' course.pk %}">{{ course.code }}</a></li>
+        <li class="breadcrumb-item active">Davomat hisoboti</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">Davomat hisoboti</h4>
+        <span class="badge bg-secondary">{{ course.code }}</span>
+        <span class="text-muted ms-2">{{ course.name }}</span>
+    </div>
+    <a href="{% url 'attendance:teacher_session_create' course.pk %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i>Yangi sessiya
+    </a>
+</div>
+
+{% if report_data and sessions %}
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="sticky-col">Talaba</th>
+                        {% for session in sessions %}
+                            <th class="text-center" style="min-width: 80px;">
+                                <small>
+                                    {{ session.date|date:"d.m" }}<br>
+                                    <span class="badge bg-info">{{ session.get_session_type_display|slice:":3" }}</span>
+                                </small>
+                            </th>
+                        {% endfor %}
+                        <th class="text-center">Jami</th>
+                        <th class="text-center">%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report_data %}
+                        <tr>
+                            <td class="sticky-col">
+                                <strong>{{ item.student.get_full_name|default:item.student.username }}</strong>
+                            </td>
+                            {% for attendance in item.attendances %}
+                                <td class="text-center">
+                                    {% if attendance %}
+                                        {% if attendance.status == 'present' %}
+                                            <span class="badge bg-success" title="Qatnashdi">
+                                                <i class="bi bi-check-lg"></i>
+                                            </span>
+                                        {% elif attendance.status == 'late' %}
+                                            <span class="badge bg-warning" title="Kechikdi">
+                                                <i class="bi bi-clock"></i>
+                                            </span>
+                                        {% elif attendance.status == 'excused' %}
+                                            <span class="badge bg-info" title="Sababli">
+                                                <i class="bi bi-file-text"></i>
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger" title="Kelmadi">
+                                                <i class="bi bi-x-lg"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge bg-secondary" title="Belgilanmagan">
+                                            <i class="bi bi-question"></i>
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                            <td class="text-center">
+                                <strong>{{ item.present_count }}</strong> / {{ item.total }}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-{% if item.percentage >= 80 %}success{% elif item.percentage >= 60 %}warning{% else %}danger{% endif %}">
+                                    {{ item.percentage }}%
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Izohlar -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h6><i class="bi bi-info-circle me-2"></i>Belgilar:</h6>
+            <span class="badge bg-success me-2"><i class="bi bi-check-lg"></i> Qatnashdi</span>
+            <span class="badge bg-warning me-2"><i class="bi bi-clock"></i> Kechikdi</span>
+            <span class="badge bg-info me-2"><i class="bi bi-file-text"></i> Sababli</span>
+            <span class="badge bg-danger me-2"><i class="bi bi-x-lg"></i> Kelmadi</span>
+            <span class="badge bg-secondary"><i class="bi bi-question"></i> Belgilanmagan</span>
+        </div>
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
+        <h5 class="mt-3 text-muted">Ma'lumotlar topilmadi</h5>
+        <p class="text-muted">Bu kursda hali sessiyalar yo'q yoki talabalar yozilmagan</p>
+        <a href="{% url 'attendance:teacher_session_create' course.pk %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Birinchi sessiya yaratish
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sticky-col {
+        position: sticky;
+        left: 0;
+        background-color: #fff;
+        z-index: 1;
+    }
+    thead .sticky-col {
+        background-color: #f8f9fa;
+        z-index: 2;
+    }
+</style>
+{% endblock %}

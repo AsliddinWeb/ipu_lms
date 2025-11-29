@@ -1,0 +1,54 @@
+<!-- templates/attendance/teacher/session_confirm_delete.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Sessiyani o'chirish - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'attendance:teacher_session_list' %}">Sessiyalar</a></li>
+        <li class="breadcrumb-item active">O'chirish</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Sessiyani o'chirish
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <i class="bi bi-trash text-danger" style="font-size: 4rem;"></i>
+
+                <h5 class="mt-3">{{ session.course.code }} - {{ session.get_session_type_display }}</h5>
+                <p class="text-muted mb-1">{{ session.title|default:"Mavzu ko'rsatilmagan" }}</p>
+                <p class="text-muted">{{ session.date|date:"d.m.Y" }} | {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</p>
+
+                {% if session.attendance_count > 0 %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Bu sessiyada <strong>{{ session.attendance_count }} ta davomat</strong> yozuvi bor. Barchasi o'chiriladi!
+                    </div>
+                {% endif %}
+
+                <p class="mb-4">Rostdan ham bu sessiyani o'chirmoqchimisiz?</p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-2"></i>Ha, o'chirish
+                        </button>
+                        <a href="{% url 'attendance:teacher_session_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Bekor qilish
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
