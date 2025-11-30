@@ -29,8 +29,26 @@ admin.site.index_title = "Dashboard"
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    # Landing
+    path('', include('apps.main.urls', namespace='main')),
+
     # Accounts
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
+
+    # Courses
+    path('courses/', include('apps.courses.urls', namespace='courses')),
+
+    # Assessments
+    path('assessments/', include('apps.assessments.urls', namespace='assessments')),
+
+    # Attendance
+    path('attendance/', include('apps.attendance.urls', namespace='attendance')),
+
+    # Analytics
+    path('analytics/', include('apps.analytics.urls', namespace='analytics')),
+
+    # Content
+    path('content/', include('apps.content.urls', namespace='content')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

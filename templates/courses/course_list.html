@@ -1,0 +1,89 @@
+<!-- templates/courses/course_list.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Kurslar - IPU LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">
+        <i class="bi bi-book me-2"></i>Kurslar
+    </h4>
+</div>
+
+<!-- Qidiruv -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control" placeholder="Kurs nomi yoki kodi..." value="{{ query|default:'' }}">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Qidirish</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'courses:list' %}" class="btn btn-outline-secondary w-100">Tozalash</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Kurslar ro'yxati -->
+{% if courses %}
+    <div class="row">
+        {% for course in courses %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.name }}" style="height: 160px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-primary text-white d-flex align-items-center justify-content-center" style="height: 160px;">
+                            <i class="bi bi-book" style="font-size: 4rem; opacity: 0.5;"></i>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary">{{ course.code }}</span>
+                            <span class="badge bg-info">{{ course.credits }} kredit</span>
+                        </div>
+
+                        <h5 class="card-title">{{ course.name }}</h5>
+
+                        <p class="card-text text-muted small">
+                            {{ course.description|truncatewords:15|default:"Tavsif yo'q" }}
+                        </p>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-person text-muted me-2"></i>
+                            <small class="text-muted">
+                                {{ course.teacher.get_full_name|default:course.teacher.username }}
+                            </small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-people me-1"></i>{{ course.enrolled_count }} talaba
+                            </small>
+                            <a href="{% url 'courses:detail' course.pk %}" class="btn btn-sm btn-primary">
+                                Batafsil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+        <h5 class="mt-3 text-muted">Kurslar topilmadi</h5>
+        {% if query %}
+            <p class="text-muted">"{{ query }}" bo'yicha natija yo'q</p>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

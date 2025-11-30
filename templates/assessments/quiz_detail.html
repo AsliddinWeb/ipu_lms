@@ -1,0 +1,164 @@
+<!-- templates/assessments/quiz_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'assessments:quiz_list' %}">Testlar</a></li>
+        <li class="breadcrumb-item active">{{ quiz.title }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ quiz.title }}</h5>
+                {% if quiz.get_status == 'active' %}
+                    <span class="badge bg-success">Faol</span>
+                {% elif quiz.get_status == 'upcoming' %}
+                    <span class="badge bg-warning">Kutilmoqda</span>
+                {% else %}
+                    <span class="badge bg-danger">Tugagan</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <p>{{ quiz.description|default:"Tavsif yo'q"|linebreaks }}</p>
+
+                <hr>
+
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <i class="bi bi-question-circle text-primary" style="font-size: 2rem;"></i>
+                        <h5 class="mt-2 mb-0">{{ quiz.question_count }}</h5>
+                        <small class="text-muted">Savollar</small>
+                    </div>
+                    <div class="col-md-3">
+                        <i class="bi bi-clock text-info" style="font-size: 2rem;"></i>
+                        <h5 class="mt-2 mb-0">{{ quiz.time_limit_minutes|default:"-" }}</h5>
+                        <small class="text-muted">Daqiqa</small>
+                    </div>
+                    <div class="col-md-3">
+                        <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                        <h5 class="mt-2 mb-0">{{ quiz.passing_score }}%</h5>
+                        <small class="text-muted">O'tish bali</small>
+                    </div>
+                    <div class="col-md-3">
+                        <i class="bi bi-arrow-repeat text-warning" style="font-size: 2rem;"></i>
+                        <h5 class="mt-2 mb-0">{{ attempts_left }}</h5>
+                        <small class="text-muted">Urinish qoldi</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                {% if ongoing_attempt %}
+                    <a href="{% url 'assessments:quiz_take' ongoing_attempt.pk %}" class="btn btn-warning">
+                        <i class="bi bi-play-fill me-2"></i>Davom etish
+                    </a>
+                {% elif quiz.get_status == 'active' and attempts_left > 0 %}
+                    <a href="{% url 'assessments:quiz_start' quiz.pk %}" class="btn btn-primary">
+                        <i class="bi bi-play-fill me-2"></i>Testni boshlash
+                    </a>
+                {% elif quiz.get_status == 'upcoming' %}
+                    <button class="btn btn-secondary" disabled>
+                        <i class="bi bi-clock me-2"></i>Hali boshlanmagan
+                    </button>
+                {% elif attempts_left <= 0 %}
+                    <button class="btn btn-secondary" disabled>
+                        <i class="bi bi-x-circle me-2"></i>Urinishlar tugagan
+                    </button>
+                {% else %}
+                    <button class="btn btn-secondary" disabled>
+                        <i class="bi bi-x-circle me-2"></i>Test tugagan
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Urinishlar tarixi -->
+        {% if attempts %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Urinishlar tarixi</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Sana</th>
+                                <th>Natija</th>
+                                <th>Holat</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attempt in attempts %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ attempt.started_at|date:"d.m.Y H:i" }}</td>
+                                    <td>
+                                        {% if attempt.is_completed %}
+                                            <strong>{{ attempt.score }}%</strong>
+                                            <small class="text-muted">({{ attempt.points_earned }}/{{ attempt.points_possible }})</small>
+                                        {% else %}
+                                            <span class="text-warning">Tugallanmagan</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if attempt.is_completed %}
+                                            {% if attempt.is_passed %}
+                                                <span class="badge bg-success">O'tdi</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">O'tmadi</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-warning">Jarayonda</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if attempt.is_completed %}
+                                            <a href="{% url 'assessments:quiz_result' attempt.pk %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Test haqida</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-book me-2"></i>Kurs</span>
+                    <span class="text-muted">{{ quiz.course.code }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-calendar me-2"></i>Boshlanish</span>
+                    <span class="text-muted">{{ quiz.available_from|date:"d.m.Y H:i" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-calendar-check me-2"></i>Tugash</span>
+                    <span class="text-muted">{{ quiz.available_until|date:"d.m.Y H:i" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-shuffle me-2"></i>Aralashtirish</span>
+                    <span class="text-muted">{{ quiz.shuffle_questions|yesno:"Ha,Yo'q" }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

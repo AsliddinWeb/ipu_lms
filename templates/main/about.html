@@ -1,10 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<!-- templates/main/about.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Biz haqimizda - IPU LMS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4"><i class="bi bi-info-circle me-2"></i>Biz haqimizda</h1>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4>IPU LMS nima?</h4>
+                    <p>
+                        IPU LMS - bu oliy ta'lim muassasalari uchun maxsus ishlab chiqilgan
+                        zamonaviy o'quv boshqaruv tizimi (Learning Management System).
+                        Tizim o'qituvchilar va talabalar uchun ta'lim jarayonini
+                        osonlashtirish va samaradorligini oshirish maqsadida yaratilgan.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4>Bizning maqsadimiz</h4>
+                    <p>
+                        Ta'lim sohasida raqamli transformatsiyani amalga oshirish va
+                        zamonaviy texnologiyalar yordamida ta'lim sifatini oshirish.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4>Imkoniyatlar</h4>
+                    <ul>
+                        <li>Online darslar va materiallar</li>
+                        <li>Interaktiv testlar va baholash</li>
+                        <li>Elektron davomat tizimi</li>
+                        <li>Statistika va tahlillar</li>
+                        <li>Mobil qulay interfeys</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'main:landing' %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-2"></i>Bosh sahifaga
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

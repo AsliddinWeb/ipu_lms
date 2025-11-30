@@ -1,0 +1,125 @@
+<!-- templates/courses/lesson_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ lesson.title }} - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:list' %}">Kurslar</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'courses:detail' course.pk %}">{{ course.code }}</a></li>
+        <li class="breadcrumb-item active">{{ lesson.title }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Asosiy kontent -->
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-play-circle me-2"></i>{{ lesson.title }}
+                </h5>
+                {% if lesson.is_free %}
+                    <span class="badge bg-success">Bepul</span>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                <!-- Video -->
+                {% if lesson.video_url %}
+                    <div class="ratio ratio-16x9 mb-4">
+                        <iframe src="{{ lesson.video_url }}" allowfullscreen></iframe>
+                    </div>
+                {% endif %}
+
+                <!-- Kontent -->
+                <div class="lesson-content">
+                    {{ lesson.content|linebreaks }}
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Oldingi dars -->
+                    <div>
+                        {% if prev_lesson %}
+                            <a href="{% url 'courses:lesson_detail' prev_lesson.pk %}" class="btn btn-outline-primary">
+                                <i class="bi bi-chevron-left me-1"></i>Oldingi
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tugatish -->
+                    <div>
+                        {% if user.is_student %}
+                            {% if progress.is_completed %}
+                                <span class="text-success">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Tugatilgan
+                                </span>
+                            {% else %}
+                                <form method="post" action="{% url 'courses:lesson_complete' lesson.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-check-lg me-1"></i>Tugatdim
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Keyingi dars -->
+                    <div>
+                        {% if next_lesson %}
+                            <a href="{% url 'courses:lesson_detail' next_lesson.pk %}" class="btn btn-primary">
+                                Keyingi<i class="bi bi-chevron-right ms-1"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yon panel -->
+    <div class="col-md-4">
+        <!-- Dars ma'lumotlari -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Dars haqida</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-clock me-2"></i>Davomiylik</span>
+                    <span class="text-muted">{{ lesson.duration_minutes|default:0 }} min</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-folder me-2"></i>Modul</span>
+                    <span class="text-muted">{{ lesson.module.title }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-book me-2"></i>Kurs</span>
+                    <span class="text-muted">{{ course.code }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Modul darslari -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-list-ul me-2"></i>{{ lesson.module.title }}</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for item in lesson.module.lessons.all %}
+                    <li class="list-group-item {% if item.pk == lesson.pk %}active{% endif %}">
+                        <a href="{% url 'courses:lesson_detail' item.pk %}" class="text-decoration-none {% if item.pk == lesson.pk %}text-white{% endif %}">
+                            <i class="bi bi-play-circle me-2"></i>{{ item.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

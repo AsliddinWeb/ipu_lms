@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'apps.attendance',
     'apps.analytics',
     'apps.content',
+    'apps.main',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,43 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
+
+# AI Chatbot
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+
+# Universitet ma'lumotlari (AI context uchun)
+UNIVERSITY_INFO = """
+IPU - Inha University in Tashkent haqida ma'lumot:
+
+📍 Manzil: Toshkent shahri, Mirzo Ulug'bek tumani, Ziyolilar ko'chasi, 9-uy
+📞 Telefon: +998 71 289 99 99
+📧 Email: info@inha.uz
+🌐 Website: https://inha.uz
+
+👨‍💼 Rektor: Prof. Dr. Muzaffar Djalalov
+👨‍💼 Prorektor: Prof. Dr. Kim Young-Chul
+
+📚 Fakultetlar:
+1. Axborot texnologiyalari fakulteti (IT)
+2. Iqtisodiyot va menejment fakulteti
+3. Logistika va biznes fakulteti
+
+⏰ Ish vaqti: Dushanba - Juma, 09:00 - 18:00
+📅 O'quv yili: Sentyabr - Iyun
+
+💰 Kontrakt narxi: 22,000,000 - 33,000,000 so'm (yo'nalishga qarab)
+
+🎓 Talabalar soni: 3000+ 
+👨‍🏫 O'qituvchilar: 200+
+
+📋 Qabul hujjatlari:
+- Pasport nusxasi
+- Diplom yoki attestat
+- 3x4 rasm (6 dona)
+- Tibbiy ma'lumotnoma (086)
+
+🏆 Yutuqlar:
+- Janubiy Koreya Inha University hamkorligi
+- Xalqaro diplom
+- Koreys tili o'qitiladi
+"""

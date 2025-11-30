@@ -7,22 +7,20 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">
-        <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
+        <i class="bi bi-speedometer2 me-2"></i>Admin Panel
     </h4>
-    <a href="{% url 'admin:index' %}" class="btn btn-sm btn-outline-primary">
-        <i class="bi bi-gear me-1"></i>Admin panel
-    </a>
+    <span class="text-muted">Xush kelibsiz, {{ user.first_name|default:user.username }}!</span>
 </div>
 
-<!-- Statistika kartalar -->
+<!-- Asosiy statistika -->
 <div class="row mb-4">
     <div class="col-md-3 mb-3">
-        <div class="card bg-primary text-white">
+        <div class="card bg-primary text-white h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="mb-0">Talabalar</h6>
-                        <h3 class="mb-0">0</h3>
+                        <h3 class="mb-0">{{ total_students }}</h3>
                     </div>
                     <i class="bi bi-mortarboard" style="font-size: 2rem; opacity: 0.5;"></i>
                 </div>
@@ -31,12 +29,12 @@
     </div>
 
     <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
+        <div class="card bg-success text-white h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="mb-0">O'qituvchilar</h6>
-                        <h3 class="mb-0">0</h3>
+                        <h3 class="mb-0">{{ total_teachers }}</h3>
                     </div>
                     <i class="bi bi-person-workspace" style="font-size: 2rem; opacity: 0.5;"></i>
                 </div>
@@ -45,26 +43,26 @@
     </div>
 
     <div class="col-md-3 mb-3">
-        <div class="card bg-warning text-dark">
+        <div class="card bg-warning text-dark h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="mb-0">Kurslar</h6>
-                        <h3 class="mb-0">0</h3>
+                        <h3 class="mb-0">{{ total_courses }}</h3>
                     </div>
-                    <i class="bi bi-book" style="font-size: 2rem; opacity: 0.5;"></i>
+                    <i class="bi bi-journal-text" style="font-size: 2rem; opacity: 0.5;"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
+        <div class="card bg-info text-white h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="mb-0">Fakultetlar</h6>
-                        <h3 class="mb-0">0</h3>
+                        <h3 class="mb-0">{{ total_faculties }}</h3>
                     </div>
                     <i class="bi bi-building" style="font-size: 2rem; opacity: 0.5;"></i>
                 </div>
@@ -73,26 +71,57 @@
     </div>
 </div>
 
+<!-- Qo'shimcha statistika -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle text-success" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2 mb-0">{{ active_courses }}</h3>
+                <small class="text-muted">Faol kurslar</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-box-arrow-in-right text-primary" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2 mb-0">{{ today_logins }}</h3>
+                <small class="text-muted">Bugungi kirishlar</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-graph-up text-info" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2 mb-0">{{ weekly_enrollments }}</h3>
+                <small class="text-muted">Haftalik yozilishlar</small>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <!-- Tez harakatlar -->
     <div class="col-md-4 mb-4">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm h-100">
             <div class="card-header">
                 <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Tez harakatlar</h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{% url 'admin:accounts_user_add' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-person-plus me-2"></i>Foydalanuvchi qo'shish
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary">
+                        <i class="bi bi-gear me-2"></i>Admin panel
                     </a>
-                    <a href="{% url 'admin:accounts_faculty_add' %}" class="btn btn-outline-success">
-                        <i class="bi bi-building-add me-2"></i>Fakultet qo'shish
+                    <a href="{% url 'admin:accounts_user_changelist' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-people me-2"></i>Foydalanuvchilar
                     </a>
-                    <a href="{% url 'admin:accounts_department_add' %}" class="btn btn-outline-info">
-                        <i class="bi bi-diagram-3 me-2"></i>Kafedra qo'shish
+                    <a href="{% url 'admin:courses_course_changelist' %}" class="btn btn-outline-success">
+                        <i class="bi bi-journal-text me-2"></i>Kurslar
                     </a>
-                    <a href="{% url 'admin:accounts_group_add' %}" class="btn btn-outline-warning">
-                        <i class="bi bi-people me-2"></i>Guruh qo'shish
+                    <a href="{% url 'admin:accounts_faculty_changelist' %}" class="btn btn-outline-info">
+                        <i class="bi bi-building me-2"></i>Fakultetlar
                     </a>
                 </div>
             </div>
@@ -100,59 +129,142 @@
     </div>
 
     <!-- So'nggi foydalanuvchilar -->
-    <div class="col-md-8 mb-4">
-        <div class="card shadow-sm">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-people me-2"></i>So'nggi foydalanuvchilar</h5>
-                <a href="{% url 'admin:accounts_user_changelist' %}" class="btn btn-sm btn-primary">Barchasi</a>
+                <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Yangi foydalanuvchilar</h5>
             </div>
-            <div class="card-body">
-                <div class="text-center text-muted py-4">
-                    <i class="bi bi-person-lines-fill" style="font-size: 2rem;"></i>
-                    <p class="mt-2 mb-0 small">Foydalanuvchilar ro'yxati</p>
-                </div>
+            <div class="card-body p-0">
+                {% if recent_users %}
+                    <ul class="list-group list-group-flush">
+                        {% for u in recent_users %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ u.get_full_name|default:u.username }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ u.email }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-{% if u.role == 'student' %}primary{% elif u.role == 'teacher' %}success{% else %}danger{% endif %}">
+                                        {{ u.get_role_display }}
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">{{ u.date_joined|timesince }} oldin</small>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-people" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0 small">Foydalanuvchilar yo'q</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- So'nggi kurslar -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-journal-plus me-2"></i>Yangi kurslar</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_courses %}
+                    <ul class="list-group list-group-flush">
+                        {% for course in recent_courses %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ course.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        <span class="badge bg-secondary">{{ course.code }}</span>
+                                        {{ course.teacher.get_full_name|default:course.teacher.username }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-{% if course.is_active %}success{% else %}danger{% endif %}">
+                                    {{ course.is_active|yesno:"Faol,Faol emas" }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-journal-x" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0 small">Kurslar yo'q</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
+<!-- So'nggi faollik -->
 <div class="row">
-    <!-- Tizim holati -->
-    <div class="col-md-6 mb-4">
+    <div class="col-md-12 mb-4">
         <div class="card shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-activity me-2"></i>Tizim holati</h5>
-            </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-check-circle text-success me-2"></i>Server holati</span>
-                        <span class="badge bg-success">Ishlayapti</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-database text-primary me-2"></i>Ma'lumotlar bazasi</span>
-                        <span class="badge bg-success">OK</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-hdd text-info me-2"></i>Xotira</span>
-                        <span class="badge bg-success">Yetarli</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- So'nggi faollik -->
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>So'nggi faollik</h5>
+                <span class="badge bg-info">{{ weekly_quiz_attempts }} ta test (hafta)</span>
             </div>
-            <div class="card-body">
-                <div class="text-center text-muted py-4">
-                    <i class="bi bi-activity" style="font-size: 2rem;"></i>
-                    <p class="mt-2 mb-0 small">Faollik tarixi bo'sh</p>
-                </div>
+            <div class="card-body p-0">
+                {% if recent_activities %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Foydalanuvchi</th>
+                                    <th>Faollik</th>
+                                    <th>Kurs</th>
+                                    <th>Vaqt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activity in recent_activities %}
+                                    <tr>
+                                        <td>
+                                            <i class="bi bi-person-circle me-2"></i>
+                                            {{ activity.user.get_full_name|default:activity.user.username }}
+                                        </td>
+                                        <td>
+                                            {% if activity.activity_type == 'login' %}
+                                                <span class="badge bg-success">Kirish</span>
+                                            {% elif activity.activity_type == 'logout' %}
+                                                <span class="badge bg-secondary">Chiqish</span>
+                                            {% elif activity.activity_type == 'view_course' %}
+                                                <span class="badge bg-primary">Kurs ko'rish</span>
+                                            {% elif activity.activity_type == 'enroll_course' %}
+                                                <span class="badge bg-info">Yozilish</span>
+                                            {% elif activity.activity_type == 'complete_lesson' %}
+                                                <span class="badge bg-success">Dars tugatish</span>
+                                            {% elif activity.activity_type == 'complete_quiz' %}
+                                                <span class="badge bg-warning">Test tugatish</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ activity.get_activity_type_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if activity.course %}
+                                                <span class="badge bg-secondary">{{ activity.course.code }}</span>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ activity.created_at|timesince }} oldin</small>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-activity" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0 small">Faollik tarixi bo'sh</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

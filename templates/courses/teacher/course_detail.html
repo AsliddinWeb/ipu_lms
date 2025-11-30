@@ -1,0 +1,316 @@
+<!-- templates/courses/teacher/course_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ course.name }} - Boshqaruv{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_courses' %}">Fanlarim</a></li>
+        <li class="breadcrumb-item active">{{ course.code }}</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">{{ course.name }}</h4>
+        <span class="badge bg-secondary">{{ course.code }}</span>
+        <span class="badge bg-{{ course.is_active|yesno:'success,danger' }}">
+            {{ course.is_active|yesno:'Faol,Faol emas' }}
+        </span>
+    </div>
+    <div>
+        <a href="{% url 'courses:detail' course.pk %}" class="btn btn-outline-primary" target="_blank">
+            <i class="bi bi-eye me-1"></i>Ko'rish
+        </a>
+        <a href="{% url 'courses:teacher_course_edit' course.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-pencil me-1"></i>Tahrirlash
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Statistika -->
+    <div class="col-md-12 mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Modullar</h6>
+                                <h3 class="mb-0">{{ course.module_count }}</h3>
+                            </div>
+                            <i class="bi bi-collection" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Darslar</h6>
+                                <h3 class="mb-0">{{ course.lesson_count }}</h3>
+                            </div>
+                            <i class="bi bi-play-circle" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Talabalar</h6>
+                                <h3 class="mb-0">{{ course.enrolled_count }}</h3>
+                            </div>
+                            <i class="bi bi-people" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Kreditlar</h6>
+                                <h3 class="mb-0">{{ course.credits }}</h3>
+                            </div>
+                            <i class="bi bi-award" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Testlar -->
+<div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Testlar</h5>
+                    <a href="{% url 'assessments:teacher_quiz_create' course.pk %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Test qo'shish
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if course.quizzes.exists %}
+                        <ul class="list-group list-group-flush">
+                            {% for quiz in course.quizzes.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ quiz.title }}</strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            {{ quiz.question_count }} savol |
+                                            {{ quiz.attempts.count }} urinish |
+                                            {{ quiz.available_from|date:"d.m.Y" }} - {{ quiz.available_until|date:"d.m.Y" }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        {% if quiz.get_status == 'active' %}
+                                            <span class="badge bg-success me-2">Faol</span>
+                                        {% elif quiz.get_status == 'upcoming' %}
+                                            <span class="badge bg-warning me-2">Kutilmoqda</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary me-2">Tugagan</span>
+                                        {% endif %}
+                                        <a href="{% url 'assessments:teacher_quiz_detail' quiz.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'assessments:teacher_quiz_edit' quiz.pk %}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-clipboard-x" style="font-size: 2rem;"></i>
+                            <p class="mt-2 mb-0">Hozircha testlar yo'q</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Davomat -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Davomat</h5>
+                <div>
+                    <a href="{% url 'attendance:teacher_attendance_report' course.pk %}" class="btn btn-sm btn-outline-info">
+                        <i class="bi bi-bar-chart me-1"></i>Hisobot
+                    </a>
+                    <a href="{% url 'attendance:teacher_session_create' course.pk %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Sessiya qo'shish
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistika -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Statistika</h5>
+                <a href="{% url 'analytics:teacher_course_analytics' course.pk %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-bar-chart me-1"></i>Batafsil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Materiallar -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-folder me-2"></i>Materiallar</h5>
+                <div>
+                    <a href="{% url 'content:teacher_material_list' course.pk %}" class="btn btn-sm btn-outline-info">
+                        <i class="bi bi-list me-1"></i>Barchasi
+                    </a>
+                    <a href="{% url 'content:teacher_material_create' course.pk %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Qo'shish
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Modullar va darslar -->
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-list-nested me-2"></i>Modullar va darslar</h5>
+                <a href="{% url 'courses:teacher_module_create' course.pk %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Modul qo'shish
+                </a>
+            </div>
+            <div class="card-body p-0">
+                {% if modules %}
+                    <div class="accordion accordion-flush" id="modulesAccordion">
+                        {% for module in modules %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#module{{ module.pk }}">
+                                        <span class="badge bg-primary me-2">{{ forloop.counter }}</span>
+                                        {{ module.title }}
+                                        <span class="badge bg-secondary ms-2">{{ module.lesson_count }} dars</span>
+                                    </button>
+                                </h2>
+                                <div id="module{{ module.pk }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#modulesAccordion">
+                                    <div class="accordion-body">
+                                        <!-- Modul amallari -->
+                                        <div class="d-flex gap-2 mb-3">
+                                            <a href="{% url 'courses:teacher_lesson_create' module.pk %}" class="btn btn-sm btn-success">
+                                                <i class="bi bi-plus-lg me-1"></i>Dars qo'shish
+                                            </a>
+                                            <a href="{% url 'courses:teacher_module_edit' module.pk %}" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-pencil me-1"></i>Tahrirlash
+                                            </a>
+                                            <a href="{% url 'courses:teacher_module_delete' module.pk %}" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash me-1"></i>O'chirish
+                                            </a>
+                                        </div>
+
+                                        <!-- Darslar ro'yxati -->
+                                        {% if module.lessons.all %}
+                                            <ul class="list-group">
+                                                {% for lesson in module.lessons.all %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <i class="bi bi-play-circle text-primary me-2"></i>
+                                                            {{ lesson.title }}
+                                                            {% if lesson.is_free %}
+                                                                <span class="badge bg-success ms-1">Bepul</span>
+                                                            {% endif %}
+                                                            {% if lesson.duration_minutes %}
+                                                                <small class="text-muted ms-2">{{ lesson.duration_minutes }} min</small>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div>
+                                                            <a href="{% url 'courses:teacher_lesson_edit' lesson.pk %}" class="btn btn-sm btn-outline-secondary">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                            <a href="{% url 'courses:teacher_lesson_delete' lesson.pk %}" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p class="text-muted mb-0">Hozircha darslar yo'q</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-folder2-open" style="font-size: 3rem;"></i>
+                        <p class="mt-2 mb-0">Hozircha modullar yo'q</p>
+                        <a href="{% url 'courses:teacher_module_create' course.pk %}" class="btn btn-primary btn-sm mt-3">
+                            <i class="bi bi-plus-lg me-1"></i>Birinchi modulni qo'shish
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Talabalar ro'yxati -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Talabalar</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if enrollments %}
+                    <ul class="list-group list-group-flush">
+                        {% for enrollment in enrollments %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-person-circle me-2"></i>
+                                    {{ enrollment.student.get_full_name|default:enrollment.student.username }}
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 60px; height: 6px;">
+                                        <div class="progress-bar" style="width: {{ enrollment.progress }}%"></div>
+                                    </div>
+                                    <small class="text-muted">{{ enrollment.progress }}%</small>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-people" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0 small">Hozircha talabalar yo'q</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

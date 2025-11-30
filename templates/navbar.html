@@ -1,91 +1,218 @@
 <!-- templates/navbar.html -->
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm" id="mainNavbar">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'accounts:dashboard' %}">
-            <i class="bi bi-mortarboard-fill me-2"></i>IPU LMS
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <div class="brand-icon me-2">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <span class="brand-text">IPU <span class="text-warning">LMS</span></span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
             {% if user.is_authenticated %}
+                <!-- Authenticated Menu -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:dashboard' %}">
-                            <i class="bi bi-house me-1"></i>Bosh sahifa
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'accounts:dashboard' %}">
+                            <i class="bi bi-house-door me-1"></i>Dashboard
                         </a>
                     </li>
 
                     {% if user.is_student %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-book me-1"></i>Kurslarim
+                        <!-- Student Menu -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-book me-1"></i>O'qish
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-animated">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'courses:my_courses' %}">
+                                        <i class="bi bi-collection me-2 text-primary"></i>Kurslarim
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'courses:list' %}">
+                                        <i class="bi bi-search me-2 text-success"></i>Barcha kurslar
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-clipboard-check me-1"></i>Testlar
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-clipboard-check me-1"></i>Baholash
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-animated">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'assessments:quiz_list' %}">
+                                        <i class="bi bi-pencil-square me-2 text-warning"></i>Testlar
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'assessments:gradebook' %}">
+                                        <i class="bi bi-award me-2 text-info"></i>Baholarim
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'attendance:student_attendance' %}">
+                                        <i class="bi bi-calendar-check me-2 text-success"></i>Davomatim
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-bar-chart me-1"></i>Baholarim
+                            <a class="nav-link" href="{% url 'analytics:student_stats' %}">
+                                <i class="bi bi-graph-up me-1"></i>Statistika
                             </a>
                         </li>
                     {% endif %}
 
                     {% if user.is_teacher %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-journal-text me-1"></i>Fanlarim
+                        <!-- Teacher Menu -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-journal-text me-1"></i>O'qitish
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-people me-1"></i>Talabalar
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-calendar-check me-1"></i>Davomat
-                            </a>
+                            <ul class="dropdown-menu dropdown-menu-animated">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'courses:teacher_courses' %}">
+                                        <i class="bi bi-collection me-2 text-primary"></i>Fanlarim
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'assessments:teacher_quiz_list' %}">
+                                        <i class="bi bi-clipboard-check me-2 text-warning"></i>Testlar
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'attendance:teacher_session_list' %}">
+                                        <i class="bi bi-calendar-check me-2 text-success"></i>Davomat
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     {% endif %}
 
                     {% if user.is_superuser or user.is_admin %}
+                        <!-- Admin Menu -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin:index' %}">
-                                <i class="bi bi-gear me-1"></i>Admin panel
+                            <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">
+                                <i class="bi bi-gear me-1"></i>Admin
                             </a>
                         </li>
                     {% endif %}
                 </ul>
 
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            {% if user.avatar %}
-                                <img src="{{ user.avatar.url }}" alt="" class="rounded-circle me-1" width="24" height="24">
-                            {% else %}
-                                <i class="bi bi-person-circle me-1"></i>
-                            {% endif %}
-                            {{ user.get_full_name|default:user.username }}
+                <!-- Right Side - User Menu -->
+                <ul class="navbar-nav align-items-center">
+                    <!-- Notifications -->
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-bell fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                                3
+                            </span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated notification-dropdown">
+                            <li class="dropdown-header">
+                                <strong>Bildirishnomalar</strong>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
-                                <span class="dropdown-item-text text-muted small">
-                                    {{ user.get_role_display }}
-                                </span>
+                                <a class="dropdown-item d-flex align-items-start" href="#">
+                                    <div class="notification-icon bg-primary bg-opacity-10 text-primary me-3">
+                                        <i class="bi bi-clipboard-check"></i>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0 small">Yangi test mavjud</p>
+                                        <small class="text-muted">5 daqiqa oldin</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-start" href="#">
+                                    <div class="notification-icon bg-success bg-opacity-10 text-success me-3">
+                                        <i class="bi bi-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0 small">Test natijasi: 85%</p>
+                                        <small class="text-muted">1 soat oldin</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-center text-primary small" href="#">
+                                    Barchasini ko'rish
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- User Profile -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center user-dropdown" href="#" data-bs-toggle="dropdown">
+                            <div class="user-avatar me-2">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle">
+                                {% else %}
+                                    <div class="avatar-placeholder">
+                                        {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="user-info d-none d-lg-block">
+                                <span class="user-name">{{ user.first_name|default:user.username }}</span>
+                                <span class="user-role">{{ user.get_role_display }}</span>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated user-menu">
+                            <li class="dropdown-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar-lg me-3">
+                                        {% if user.avatar %}
+                                            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle">
+                                        {% else %}
+                                            <div class="avatar-placeholder-lg">
+                                                {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ user.email }}</small>
+                                    </div>
+                                </div>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'accounts:profile' %}">
-                                    <i class="bi bi-person me-2"></i>Profil
+                                    <i class="bi bi-person me-2 text-primary"></i>Profilim
                                 </a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:dashboard' %}">
+                                    <i class="bi bi-speedometer2 me-2 text-info"></i>Dashboard
+                                </a>
+                            </li>
+                            {% if user.is_student %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'analytics:student_stats' %}">
+                                    <i class="bi bi-graph-up me-2 text-success"></i>Statistikam
+                                </a>
+                            </li>
+                            {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
@@ -96,25 +223,49 @@
                     </li>
                 </ul>
             {% else %}
-                <ul class="navbar-nav ms-auto">
+                <!-- Guest Menu -->
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:login' %}">
+                        <a class="nav-link" href="{% url 'main:landing' %}">
+                            <i class="bi bi-house-door me-1"></i>Bosh sahifa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'courses:list' %}">
+                            <i class="bi bi-collection me-1"></i>Kurslar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:about' %}">
+                            <i class="bi bi-info-circle me-1"></i>Biz haqimizda
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:contact' %}">
+                            <i class="bi bi-envelope me-1"></i>Bog'lanish
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item me-2">
+                        <a class="btn btn-outline-light rounded-pill px-4" href="{% url 'accounts:login' %}">
                             <i class="bi bi-box-arrow-in-right me-1"></i>Kirish
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <a class="btn btn-warning rounded-pill px-4 dropdown-toggle" href="#" data-bs-toggle="dropdown">
                             <i class="bi bi-person-plus me-1"></i>Ro'yxatdan o'tish
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
                             <li>
                                 <a class="dropdown-item" href="{% url 'accounts:register_student' %}">
-                                    <i class="bi bi-mortarboard me-2"></i>Talaba
+                                    <i class="bi bi-mortarboard me-2 text-primary"></i>Talaba sifatida
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'accounts:register_teacher' %}">
-                                    <i class="bi bi-person-workspace me-2"></i>O'qituvchi
+                                    <i class="bi bi-person-workspace me-2 text-success"></i>O'qituvchi sifatida
                                 </a>
                             </li>
                         </ul>
@@ -124,3 +275,222 @@
         </div>
     </div>
 </nav>
+
+<style>
+    /* Navbar Base */
+    #mainNavbar {
+        background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+        padding: 0.8rem 0;
+        transition: all 0.3s ease;
+    }
+
+    #mainNavbar.scrolled {
+        padding: 0.5rem 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    }
+
+    /* Brand */
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: white;
+    }
+
+    .brand-text {
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: white;
+    }
+
+    /* Nav Links */
+    #mainNavbar .nav-link {
+        color: rgba(255,255,255,0.9) !important;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin: 0 2px;
+    }
+
+    #mainNavbar .nav-link:hover,
+    #mainNavbar .nav-link.active {
+        color: white !important;
+        background: rgba(255,255,255,0.15);
+    }
+
+    /* Dropdown */
+    .dropdown-menu-animated {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        padding: 0.5rem;
+        animation: dropdownFade 0.2s ease;
+    }
+
+    @keyframes dropdownFade {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .dropdown-menu-animated .dropdown-item {
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .dropdown-menu-animated .dropdown-item:hover {
+        background: #f8f9fa;
+        transform: translateX(5px);
+    }
+
+    /* User Avatar */
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-placeholder {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .user-avatar-lg {
+        width: 50px;
+        height: 50px;
+    }
+
+    .user-avatar-lg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-placeholder-lg {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    /* User Info */
+    .user-dropdown {
+        background: rgba(255,255,255,0.1);
+        border-radius: 50px;
+        padding: 0.3rem 0.8rem 0.3rem 0.3rem !important;
+    }
+
+    .user-info {
+        line-height: 1.2;
+    }
+
+    .user-name {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: white;
+    }
+
+    .user-role {
+        display: block;
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.7);
+    }
+
+    /* User Menu */
+    .user-menu {
+        min-width: 280px;
+    }
+
+    .user-menu .dropdown-header {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 12px 12px 0 0;
+        margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+    }
+
+    /* Notification */
+    .notification-badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.45rem;
+    }
+
+    .notification-dropdown {
+        min-width: 320px;
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* Mobile */
+    @media (max-width: 991.98px) {
+        #mainNavbar .navbar-collapse {
+            background: rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .user-dropdown {
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .notification-dropdown,
+        .user-menu {
+            position: static !important;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('mainNavbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+</script>

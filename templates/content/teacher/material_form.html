@@ -1,10 +1,140 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<!-- templates/content/teacher/material_form.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_courses' %}">Fanlarim</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'courses:teacher_course_detail' course.pk %}">{{ course.code }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'content:teacher_material_list' course.pk %}">Materiallar</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-earmark-plus me-2"></i>{{ title }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Material nomi</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tavsif</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Material turi</label>
+                            {{ form.material_type }}
+                            {% if form.material_type.errors %}
+                                <div class="text-danger small">{{ form.material_type.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Dars (ixtiyoriy)</label>
+                            {{ form.lesson }}
+                            {% if form.lesson.errors %}
+                                <div class="text-danger small">{{ form.lesson.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="file-field">
+                        <label class="form-label">Fayl</label>
+                        {% if material and material.file %}
+                            <div class="mb-2">
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-file-earmark me-1"></i>
+                                    {{ material.file.name|cut:"materials/" }}
+                                </span>
+                                <small class="text-muted ms-2">{{ material.get_file_size_display }}</small>
+                            </div>
+                        {% endif %}
+                        {{ form.file }}
+                        {% if form.file.errors %}
+                            <div class="text-danger small">{{ form.file.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3" id="url-field">
+                        <label class="form-label">Havola</label>
+                        {{ form.url }}
+                        <small class="text-muted">Video yoki boshqa manba havolasi</small>
+                        {% if form.url.errors %}
+                            <div class="text-danger small">{{ form.url.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label">Faol (talabalarga ko'rinadi)</label>
+                        </div>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-2"></i>Saqlash
+                        </button>
+                        <a href="{% url 'content:teacher_material_list' course.pk %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Bekor qilish
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.querySelector('[name="material_type"]');
+        const fileField = document.getElementById('file-field');
+        const urlField = document.getElementById('url-field');
+
+        function toggleFields() {
+            if (typeSelect.value === 'link') {
+                fileField.style.display = 'none';
+                urlField.style.display = 'block';
+            } else {
+                fileField.style.display = 'block';
+                urlField.style.display = 'none';
+            }
+        }
+
+        typeSelect.addEventListener('change', toggleFields);
+        toggleFields();
+    });
+</script>
+{% endblock %}

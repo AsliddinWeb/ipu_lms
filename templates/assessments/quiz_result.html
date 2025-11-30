@@ -1,0 +1,134 @@
+<!-- templates/assessments/quiz_result.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Natija - {{ attempt.quiz.title }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'assessments:quiz_list' %}">Testlar</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'assessments:quiz_detail' attempt.quiz.pk %}">{{ attempt.quiz.title }}</a></li>
+        <li class="breadcrumb-item active">Natija</li>
+    </ol>
+</nav>
+
+<!-- Natija kartasi -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm {% if attempt.is_passed %}border-success{% else %}border-danger{% endif %}">
+            <div class="card-body text-center py-5">
+                {% if attempt.is_passed %}
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    <h2 class="mt-3 text-success">Tabriklaymiz!</h2>
+                    <p class="text-muted">Siz testdan muvaffaqiyatli o'tdingiz</p>
+                {% else %}
+                    <i class="bi bi-x-circle-fill text-danger" style="font-size: 5rem;"></i>
+                    <h2 class="mt-3 text-danger">Afsus!</h2>
+                    <p class="text-muted">Siz testdan o'ta olmadingiz</p>
+                {% endif %}
+
+                <div class="row justify-content-center mt-4">
+                    <div class="col-md-8">
+                        <div class="progress mb-2" style="height: 30px;">
+                            <div class="progress-bar {% if attempt.is_passed %}bg-success{% else %}bg-danger{% endif %}"
+                                 style="width: {{ attempt.score }}%">
+                                <strong>{{ attempt.score }}%</strong>
+                            </div>
+                        </div>
+                        <small class="text-muted">O'tish bali: {{ attempt.quiz.passing_score }}%</small>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <h4 class="mb-0">{{ attempt.points_earned }}</h4>
+                        <small class="text-muted">To'plangan ball</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="mb-0">{{ attempt.points_possible }}</h4>
+                        <small class="text-muted">Maksimal ball</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="mb-0">{{ attempt.completed_at|date:"H:i" }}</h4>
+                        <small class="text-muted">Yakunlangan</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Javoblar tahlili -->
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Javoblar tahlili</h5>
+    </div>
+    <div class="card-body p-0">
+        {% for student_answer in student_answers %}
+            <div class="border-bottom p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <strong>Savol {{ forloop.counter }}:</strong>
+                        <span class="badge bg-secondary ms-2">{{ student_answer.question.points }} ball</span>
+                    </div>
+                    <div>
+                        {% if student_answer.is_correct %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-lg me-1"></i>To'g'ri (+{{ student_answer.points_earned }})
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-lg me-1"></i>Noto'g'ri (0)
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <p class="mb-3">{{ student_answer.question.text }}</p>
+
+                <div class="ms-3">
+                    {% for answer in student_answer.question.answers.all %}
+                        <div class="d-flex align-items-center mb-2">
+                            {% if answer in student_answer.selected_answers.all %}
+                                {% if answer.is_correct %}
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                {% endif %}
+                            {% else %}
+                                {% if answer.is_correct and show_correct %}
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                {% else %}
+                                    <i class="bi bi-circle text-muted me-2"></i>
+                                {% endif %}
+                            {% endif %}
+
+                            <span class="{% if answer in student_answer.selected_answers.all %}fw-bold{% endif %} {% if answer.is_correct and show_correct %}text-success{% endif %}">
+                                {{ answer.text }}
+                            </span>
+
+                            {% if answer in student_answer.selected_answers.all %}
+                                <span class="badge bg-secondary ms-2">Sizning javobingiz</span>
+                            {% endif %}
+
+                            {% if answer.is_correct and show_correct %}
+                                <span class="badge bg-success ms-2">To'g'ri javob</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+    <a href="{% url 'assessments:quiz_detail' attempt.quiz.pk %}" class="btn btn-primary">
+        <i class="bi bi-arrow-left me-2"></i>Testga qaytish
+    </a>
+    <a href="{% url 'assessments:quiz_list' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-list me-2"></i>Barcha testlar
+    </a>
+</div>
+{% endblock %}

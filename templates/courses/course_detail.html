@@ -1,0 +1,203 @@
+<!-- templates/courses/course_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ course.name }} - IPU LMS{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:list' %}">Kurslar</a></li>
+        <li class="breadcrumb-item active">{{ course.code }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Asosiy ma'lumot -->
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            {% if course.image %}
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.name }}" style="height: 250px; object-fit: cover;">
+            {% else %}
+                <div class="bg-primary text-white d-flex align-items-center justify-content-center" style="height: 250px;">
+                    <i class="bi bi-book" style="font-size: 5rem; opacity: 0.5;"></i>
+                </div>
+            {% endif %}
+
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="badge bg-secondary me-2">{{ course.code }}</span>
+                        <span class="badge bg-info">{{ course.credits }} kredit</span>
+                    </div>
+                    <span class="badge bg-{{ course.is_active|yesno:'success,danger' }}">
+                        {{ course.is_active|yesno:'Faol,Faol emas' }}
+                    </span>
+                </div>
+
+                <h3 class="card-title">{{ course.name }}</h3>
+
+                <p class="card-text">{{ course.description|default:"Tavsif yo'q"|linebreaks }}</p>
+            </div>
+        </div>
+
+        <!-- Modullar va darslar -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-list-nested me-2"></i>Kurs tarkibi</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if modules %}
+                    <div class="accordion accordion-flush" id="modulesAccordion">
+                        {% for module in modules %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#module{{ module.pk }}">
+                                        <span class="badge bg-primary me-2">{{ forloop.counter }}</span>
+                                        {{ module.title }}
+                                        <span class="badge bg-secondary ms-2">{{ module.lesson_count }} dars</span>
+                                    </button>
+                                </h2>
+                                <div id="module{{ module.pk }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#modulesAccordion">
+                                    <div class="accordion-body p-0">
+                                        {% if module.description %}
+                                            <p class="text-muted small px-3 pt-3 mb-2">{{ module.description }}</p>
+                                        {% endif %}
+
+                                        <ul class="list-group list-group-flush">
+                                            {% for lesson in module.lessons.all %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <i class="bi bi-play-circle me-2 text-primary"></i>
+                                                        {{ lesson.title }}
+                                                        {% if lesson.is_free %}
+                                                            <span class="badge bg-success ms-2">Bepul</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        {% if lesson.duration_minutes %}
+                                                            <small class="text-muted me-3">
+                                                                <i class="bi bi-clock me-1"></i>{{ lesson.duration_minutes }} min
+                                                            </small>
+                                                        {% endif %}
+
+                                                        {% if enrollment or lesson.is_free %}
+                                                            <a href="{% url 'courses:lesson_detail' lesson.pk %}" class="btn btn-sm btn-outline-primary">
+                                                                Ko'rish
+                                                            </a>
+                                                        {% else %}
+                                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                                <i class="bi bi-lock"></i>
+                                                            </button>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                            {% empty %}
+                                                <li class="list-group-item text-muted">Darslar yo'q</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-folder2-open" style="font-size: 3rem;"></i>
+                        <p class="mt-2 mb-0">Hozircha modullar yo'q</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Yon panel -->
+    <div class="col-md-4">
+        <!-- Yozilish kartasi -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    {% if enrollment %}
+                        <div class="text-center mb-3">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                            <h5 class="mt-2">Siz yozilgansiz!</h5>
+                            <div class="progress mt-3" style="height: 10px;">
+                                <div class="progress-bar" style="width: {{ enrollment.progress }}%"></div>
+                            </div>
+                            <small class="text-muted">{{ enrollment.progress }}% tugatilgan</small>
+                        </div>
+
+                        <a href="{% url 'courses:my_courses' %}" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-play-fill me-2"></i>Davom etish
+                        </a>
+
+                        <form method="post" action="{% url 'courses:unenroll' course.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Rostdan ham chiqmoqchimisiz?')">
+                                <i class="bi bi-x-lg me-2"></i>Kursdan chiqish
+                            </button>
+                        </form>
+                    {% elif user.is_student %}
+                        <div class="text-center mb-3">
+                            <i class="bi bi-mortarboard text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="mt-2">Kursga yoziling</h5>
+                            <p class="text-muted small">Barcha darslarga kirish imkoniyatiga ega bo'ling</p>
+                        </div>
+
+                        <form method="post" action="{% url 'courses:enroll' course.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-plus-lg me-2"></i>Kursga yozilish
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                            <p class="mt-2 mb-0">Faqat talabalar kursga yozilishi mumkin</p>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center mb-3">
+                        <i class="bi bi-box-arrow-in-right text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="mt-2">Tizimga kiring</h5>
+                        <p class="text-muted small">Kursga yozilish uchun tizimga kiring</p>
+                    </div>
+
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Kirish
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Kurs ma'lumotlari -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Kurs haqida</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-person me-2"></i>O'qituvchi</span>
+                    <span class="text-muted">{{ course.teacher.get_full_name|default:course.teacher.username }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-building me-2"></i>Kafedra</span>
+                    <span class="text-muted">{{ course.department.name }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-collection me-2"></i>Modullar</span>
+                    <span class="text-muted">{{ course.module_count }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-play-circle me-2"></i>Darslar</span>
+                    <span class="text-muted">{{ course.lesson_count }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="bi bi-people me-2"></i>Talabalar</span>
+                    <span class="text-muted">{{ course.enrolled_count }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
