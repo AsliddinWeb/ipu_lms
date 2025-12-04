@@ -137,37 +137,37 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 # Universitet ma'lumotlari (AI context uchun)
 UNIVERSITY_INFO = """
-IPU - Inha University in Tashkent haqida ma'lumot:
+IPU - Iqtisodiyot va Pedagogika Universiteti haqida ma'lumot:
 
-📍 Manzil: Toshkent shahri, Mirzo Ulug'bek tumani, Ziyolilar ko'chasi, 9-uy
-📞 Telefon: +998 71 289 99 99
-📧 Email: info@inha.uz
-🌐 Website: https://inha.uz
-
-👨‍💼 Rektor: Prof. Dr. Muzaffar Djalalov
-👨‍💼 Prorektor: Prof. Dr. Kim Young-Chul
+📍 Manzil: Qashqadaryo viloyati, Qarshi shahri, Ravoq MFY, I.Karimov ko'chasi, 13-uy
+📞 Telefon: +998 (75) 223-60-60
+📧 Email: ipu@ipu-edu.uz
+🌐 Website: https://ipu-edu.uz
 
 📚 Fakultetlar:
-1. Axborot texnologiyalari fakulteti (IT)
-2. Iqtisodiyot va menejment fakulteti
-3. Logistika va biznes fakulteti
+1. Iqtisodiyot fakulteti
+2. Pedagogika fakulteti
+3. Filologiya fakulteti
+4. Tabiiy fanlar fakulteti
 
-⏰ Ish vaqti: Dushanba - Juma, 09:00 - 18:00
+⏰ Ish vaqti: Dushanba - Shanba, 09:00 - 18:00
 📅 O'quv yili: Sentyabr - Iyun
-
-💰 Kontrakt narxi: 22,000,000 - 33,000,000 so'm (yo'nalishga qarab)
-
-🎓 Talabalar soni: 3000+ 
-👨‍🏫 O'qituvchilar: 200+
 
 📋 Qabul hujjatlari:
 - Pasport nusxasi
-- Diplom yoki attestat
+- Diplom yoki attestat (asl nusxa + nusxa)
 - 3x4 rasm (6 dona)
 - Tibbiy ma'lumotnoma (086)
+- Harbiy guvohnoma (yigitlar uchun)
 
-🏆 Yutuqlar:
-- Janubiy Koreya Inha University hamkorligi
-- Xalqaro diplom
-- Koreys tili o'qitiladi
+🏆 Afzalliklar:
+- Zamonaviy o'quv binolari
+- Tajribali professor-o'qituvchilar
+- Amaliyot imkoniyatlari
+- Stipendiya dasturlari
+- Yotoqxona mavjud
+
+📱 Ijtimoiy tarmoqlar:
+- Telegram: @iaboratory
+- Instagram: @ipu_edu_uz
 """
