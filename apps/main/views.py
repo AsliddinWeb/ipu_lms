@@ -13,8 +13,8 @@ from apps.accounts.models import User, Faculty
 
 def landing_page(request):
     """Landing page"""
-    if request.user.is_authenticated:
-        return redirect('accounts:dashboard')
+    # if request.user.is_authenticated:
+    #     return redirect('accounts:dashboard')
 
     total_courses = Course.objects.filter(is_active=True).count()
     total_students = User.objects.filter(role='student').count()

@@ -2,6 +2,7 @@
 
 from django.db import models
 from apps.accounts.models import User, Department
+import re
 
 
 class Course(models.Model):
@@ -107,6 +108,30 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def video_embed_url(self):
+        """YouTube URL ni embed formatga o'girish"""
+        if not self.video_url:
+            return ''
+
+        url = self.video_url
+
+        # youtube.com/watch?v=VIDEO_ID
+        match = re.search(r'youtube\.com/watch\?v=([a-zA-Z0-9_-]+)', url)
+        if match:
+            return f'https://www.youtube.com/embed/{match.group(1)}'
+
+        # youtu.be/VIDEO_ID
+        match = re.search(r'youtu\.be/([a-zA-Z0-9_-]+)', url)
+        if match:
+            return f'https://www.youtube.com/embed/{match.group(1)}'
+
+        # Agar allaqachon embed formatda bo'lsa
+        if 'youtube.com/embed/' in url:
+            return url
+
+        return url
 
 
 class Enrollment(models.Model):

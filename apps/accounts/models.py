@@ -126,6 +126,21 @@ class StudentProfile(models.Model):
 
 class TeacherProfile(models.Model):
     """O'qituvchi profili"""
+
+    class AcademicDegree(models.TextChoices):
+        NONE = '', '-- Tanlang --'
+        ACADEMICIAN = 'Академик', 'Akademik'
+        DSC_PROFESSOR = 'DSc, Профессор', 'DSc, Professor'
+        PROFESSOR = 'Профессор', 'Professor'
+        PROFESSOR_VB = 'Профессор в.б.', 'Professor v.b.'
+        PHD_DOTSENT = 'PhD, Доцент', 'PhD, Dotsent'
+        DOTSENT = 'Доцент', 'Dotsent'
+        DOTSENT_VB = 'Доцент в.б.', 'Dotsent v.b.'
+        SENIOR_TEACHER = 'Катта ўқитувчи', 'Katta o\'qituvchi'
+        ASSISTANT = 'Ассистент, ўқитувчи', 'Assistent, o\'qituvchi'
+        ASSISTANT_TRAINEE = 'Ассистент-стажёр', 'Assistent-stajer'
+
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -143,7 +158,9 @@ class TeacherProfile(models.Model):
         verbose_name="Kafedra"
     )
     academic_degree = models.CharField(
-        max_length=100,
+        max_length=50,
+        choices=AcademicDegree.choices,
+        default=AcademicDegree.NONE,
         blank=True,
         verbose_name="Ilmiy daraja"
     )

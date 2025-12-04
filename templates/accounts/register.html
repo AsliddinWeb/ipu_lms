@@ -100,13 +100,7 @@
                     <a href="{% url 'accounts:login' %}">Kirish</a>
                 </p>
 
-                <p class="text-center mt-2 mb-0">
-                    {% if user_type == 'student' %}
-                        <a href="{% url 'accounts:register_teacher' %}">O'qituvchi sifatida ro'yxatdan o'tish</a>
-                    {% else %}
-                        <a href="{% url 'accounts:register_student' %}">Talaba sifatida ro'yxatdan o'tish</a>
-                    {% endif %}
-                </p>
+
             </div>
         </div>
     </div>

@@ -173,7 +173,7 @@ class StudentProfileForm(forms.ModelForm):
         model = StudentProfile
         fields = ('student_id', 'faculty', 'group', 'enrollment_year')
         widgets = {
-            'student_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'student_id': forms.TextInput(attrs={'class': 'form-control', 'disabled': 'disabled', 'readonly': 'readonly'}),
             'faculty': forms.Select(attrs={'class': 'form-select'}),
             'group': forms.Select(attrs={'class': 'form-select'}),
             'enrollment_year': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -187,7 +187,9 @@ class TeacherProfileForm(forms.ModelForm):
         model = TeacherProfile
         fields = ('employee_id', 'department', 'academic_degree')
         widgets = {
-            'employee_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'employee_id': forms.TextInput(attrs={'class': 'form-control', 'disabled': 'disabled', 'readonly': 'readonly'}),
             'department': forms.Select(attrs={'class': 'form-select'}),
-            'academic_degree': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'PhD, DSc...'}),
+            'academic_degree': forms.Select(attrs={
+                'class': 'form-select'
+            }),
         }

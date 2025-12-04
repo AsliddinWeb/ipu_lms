@@ -12,7 +12,7 @@ urlpatterns = [
 
     # Register
     path('register/student/', views.register_student, name='register_student'),
-    path('register/teacher/', views.register_teacher, name='register_teacher'),
+    # path('register/teacher/', views.register_teacher, name='register_teacher'),
 
     # Profile & Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
